@@ -1,0 +1,12 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+	displayBlock="true"
+	controllerName="pass.manager.view.App"
+	height="100%">
+    <Shell>
+        <App>
+            <Page title="{i18n>PassManager}"></Page>
+        </App>
+    </Shell>
+</mvc:View>
