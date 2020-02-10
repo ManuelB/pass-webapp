@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+    <Dialog resizable="true" draggable="true" title="Configure Bitbucket" contentWidth="30rem">
+        <f:SimpleForm id="SimpleFormToolbar"
+			editable="true"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="3"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="4"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false"
+            ariaLabelledBy="Title1">
+            <Label text="BitBucket Repository URL" />
+            <Input value="{/baseUrl}" placeholder="e.g. https://api.bitbucket.org/2.0/repositories/example/password-repo/src/5333c4c6df4f686735d4a8515bc9e1231390220c/" />
+            <Label text="Your username" />
+            <Input value="{/username}" placeholder="e.g. john@example.com" />
+            <Label text="Your password" />
+            <Input type="Password" value="{/password}" placeholder="e.g. asdloki343sfds" />
+        </f:SimpleForm>
+        <buttons>
+            <Button text="Save Bitbucket Configuration" press="onSave" enabled="{= ${/repositoryUrl} !== '' &amp;&amp; ${/username} !== '' &amp;&amp; ${/password} !== ''}" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

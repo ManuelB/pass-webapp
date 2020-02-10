@@ -1,12 +1,24 @@
 <mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
+    xmlns:code="sap.ui.codeeditor"
 	displayBlock="true"
 	controllerName="pass.manager.view.App"
 	height="100%">
     <Shell>
-        <App>
-            <Page title="{i18n>PassManager}"></Page>
-        </App>
+        <SplitApp>
+            <masterPages>
+                <Page title="{i18n>PassManagerSelectFile}">
+                    <Tree items="{path: 'Bitbucket>/values', parameters: {arrayNames: ['values']}}">
+                        <StandardTreeItem title="{Bitbucket>path}" press="onFileSelect" type="Active"></StandardTreeItem>
+                    </Tree>
+                </Page>
+            </masterPages>
+            <detailPages>
+                <Page title="{i18n>PassManager}">
+                    <code:CodeEditor id="code" editable="false" type="text" />
+                </Page>
+            </detailPages>
+        </SplitApp>
     </Shell>
 </mvc:View>

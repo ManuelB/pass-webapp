@@ -43,7 +43,7 @@
             }
         },
         "models": {
-            "": {
+            "Bitbucket": {
                 "type": "pass.manager.model.Bitbucket"
             },
             "OpenPGP": {

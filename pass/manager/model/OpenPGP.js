@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/model/json/JSONModel", "pass/thirdparty/openpgp.min", "sap/ui/core/Fragment", "sap/base/Log"],
+sap.ui.define(["sap/ui/model/json/JSONModel", "pass/thirdparty/openpgp", "sap/ui/core/Fragment", "sap/base/Log"],
 
     function(JSONModel, openpgpUndefined, Fragment, Log) {
         "use strict";
@@ -18,7 +18,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "pass/thirdparty/openpgp.min", "sa
                 });
                 // The OpenPGP class should only initialized once 
                 // set the relative web worker path
-                openpgp.initWorker({ path: sap.ui.require.toUrl("pass/thirdparty") + '/openpgp.worker.js' }).then(() => {
+                this.pInitWorker = openpgp.initWorker({ path: sap.ui.require.toUrl("pass/thirdparty") + '/openpgp.worker.js' });
+
+                this.pInitWorker.then(() => {
                     if (window.localStorage.getItem("OpenPGP") === null) {
                         this.requestKeyPair(() => this.loadKeyPair());
                     } else {
@@ -46,9 +48,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "pass/thirdparty/openpgp.min", "sa
                     this.setProperty("/OpenPGPKeyPair/privateKeyArmored", oRsaKey.privateKeyArmored);
                     this.setProperty("/OpenPGPKeyPair/revocationCertificate", oRsaKey.revocationCertificate);
 
-                    var hkp = new openpgp.HKP('https://keys.openpgp.org/');
+                    let oHkp = new openpgp.HKP('https://keys.openpgp.org/');
 
-                    hkp.upload(oRsaKey.publicKeyArmored).then(() => {
+                    oHkp.upload(oRsaKey.publicKeyArmored).then(() => {
                         this.oDialog.close();
                     });
 
@@ -60,6 +62,36 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "pass/thirdparty/openpgp.min", "sa
             },
             "loadKeyPair": function() {
                 this.setData(JSON.parse(window.localStorage.getItem("OpenPGP")));
+            },
+            "encrypt": function(sText) {
+                return new Promise((fnResolve) => {
+                    openpgp.key.readArmored(this.getProperty("/OpenPGPKeyPair/publicKeyArmored")).then((oPublicKey) => {
+                        openpgp.encrypt({
+                            message: openpgp.message.fromText(sText),
+                            publicKeys: oPublicKey.keys, // for decryption
+                        }).then((oData) => {
+                            fnResolve(oData.data);
+                        });
+                    });
+                });
+            },
+            "decrypt": function(oUint8Array) {
+                return new Promise((fnResolve) => {
+                    openpgp.key.readArmored(this.getProperty("/OpenPGPKeyPair/privateKeyArmored")).then((oPrivateKey) => {
+                        oPrivateKey.keys[0].decrypt(this.getProperty("/passphrase")).then(() => {
+                            let pMessage = oUint8Array instanceof Uint8Array ? openpgp.message.read(oUint8Array) : openpgp.message.readArmored(oUint8Array);
+                            pMessage.then((oMessage) => {
+                                openpgp.decrypt({
+                                    message: oMessage,
+                                    privateKeys: oPrivateKey.keys // for decryption
+                                }).then((oData) => {
+                                    fnResolve(oData.data);
+                                });
+                            });
+                        });
+                    });
+                });
+
             },
             "destroy": function() {
                 openpgp.destroyWorker().then(() => {
