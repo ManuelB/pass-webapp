@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
     <Dialog resizable="true" draggable="true" title="OpenPGP Key Pair" contentWidth="30rem">
-        <f:SimpleForm id="SimpleFormToolbar"
+        <f:SimpleForm
 			editable="true"
 			layout="ResponsiveGridLayout"
 			labelSpanXL="4"
