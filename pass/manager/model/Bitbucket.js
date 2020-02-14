@@ -85,7 +85,8 @@ sap.ui.define(["./BitbucketTreeBinding", "sap/ui/model/json/JSONModel", "sap/ui/
             let oCurrentNode = this.getData();
             let iChild;
             while (iChild = aParts.shift()) {
-                aFileNames.push(oCurrentNode.values[iChild].path);
+                // get everything after the last slash
+                aFileNames.push(oCurrentNode.values[iChild].path.split(/\//).pop());
                 oCurrentNode = oCurrentNode.values[iChild];
             }
             return aFileNames.join("/");
